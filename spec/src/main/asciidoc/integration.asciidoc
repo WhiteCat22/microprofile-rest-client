@@ -54,7 +54,9 @@ When a client interface is executed from within a JAX-RS context (resource or pr
 `@RegisterClientHeaders` annotation to the interface with no value. To specify which headers to propagate from the inbound JAX-RS request to the outbound MP Rest Client request, users must use a
 comma-separated list of headers in the following MicroProfile Config property:
 
-`org.eclipse.microprofile.rest.client.propagateHeaders`.
+`mp.rest.client.propagateHeaders`
+
+Note: The original property `org.eclipse.microprofile.rest.client.propagateHeaders` has been deprecated in favor of `mp.rest.client.propagateHeaders` and will be removed in a future release.
 
 If the client interface is used within a JAX-RS context, then the implementation may support injection of `@Context` 
 fields and methods into custom `ClientHeadersFactory` instances. The injected objects are related to the JAX-RS context

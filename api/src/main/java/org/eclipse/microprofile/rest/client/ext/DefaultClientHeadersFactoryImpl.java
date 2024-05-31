@@ -44,7 +44,8 @@ import jakarta.ws.rs.core.MultivaluedMap;
  */
 public class DefaultClientHeadersFactoryImpl implements ClientHeadersFactory {
 
-    public final static String PROPAGATE_PROPERTY = "org.eclipse.microprofile.rest.client.propagateHeaders";
+    public final static String DEPRECATED_PROPAGATE_PROPERTY = "org.eclipse.microprofile.rest.client.propagateHeaders";
+    public final static String PROPAGATE_PROPERTY = "mp.rest.client.propagateHeaders";
     private final static String CLASS_NAME = DefaultClientHeadersFactoryImpl.class.getName();
     private final static Logger LOG = Logger.getLogger(CLASS_NAME);
 
@@ -60,7 +61,14 @@ public class DefaultClientHeadersFactoryImpl implements ClientHeadersFactory {
     private static Optional<String> getHeadersProperty() {
         Optional<Config> c = config();
         if (c.isPresent()) {
-            return Optional.ofNullable(c.get().getOptionalValue(PROPAGATE_PROPERTY, String.class).orElse(null));
+            Config config = c.get();
+            // Prioritize the new "mp.rest.client.propagateHeaders" property
+            String propagateProperty = config.getOptionalValue(PROPAGATE_PROPERTY, String.class).orElse(null);
+            if (propagateProperty == null) {
+                // If "mp.rest.client.propagateHeaders" isn't found check deprecated property "org.eclipse.microprofile.rest.client.propagateHeaders"
+                propagateProperty = config.getOptionalValue(DEPRECATED_PROPAGATE_PROPERTY, String.class).orElse(null);
+            }
+            return Optional.ofNullable(propagateProperty);
         }
         return Optional.empty();
     }
